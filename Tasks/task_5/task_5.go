@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+
 	var timer int
 	if _, err := fmt.Scan(&timer); err != nil {
 		log.Fatal(err)
@@ -21,7 +22,7 @@ func main() {
 	wg := sync.WaitGroup{}
 
 	wg.Add(1)
-	go DataReader(dataStream, done, &wg)
+	go DataReader(dataStream, done)
 	go DataWriter(timer, dataStream, done, &wg)
 	wg.Wait()
 	close(dataStream)
@@ -45,8 +46,7 @@ func DataWriter(timeout int, dataStream chan int, done chan struct{}, wg *sync.W
 	}
 }
 
-func DataReader(dataStream chan int, done chan struct{}, wg *sync.WaitGroup) {
-	defer wg.Done()
+func DataReader(dataStream chan int, done chan struct{}) {
 	for {
 		select {
 		case <-done:
