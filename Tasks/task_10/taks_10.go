@@ -10,7 +10,7 @@ import (
 )
 
 type ConcurrencyMap struct {
-	Map   map[float64][]float64
+	Map   map[int][]float64
 	Mutex sync.Mutex
 }
 
@@ -18,17 +18,17 @@ func main() {
 	temperatures := []float64{-25.4, -27.0, 13.0, 19.0, 15.5, 24.5, -21.0, 32.5}
 
 	wg := sync.WaitGroup{}
-	m := ConcurrencyMap{Map: make(map[float64][]float64)}
+	m := ConcurrencyMap{Map: make(map[int][]float64)}
 
 	// Проходим по всему срезу, и для каждого элемента выделям по горутине, ищущей подходящие значения в группу
-	for i := range temperatures {
+	for i := -20; i <= 30; i += 10 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
 			for _, value := range temperatures {
-				if math.Abs(value-temperatures[i]) <= 10 {
+				if value/float64(i) >= 1 && math.Abs(value-float64(i)) <= 10 {
 					m.Mutex.Lock()
-					m.Map[temperatures[i]] = append(m.Map[temperatures[i]], value)
+					m.Map[i] = append(m.Map[i], value)
 					m.Mutex.Unlock()
 				}
 			}
@@ -38,10 +38,10 @@ func main() {
 	wg.Wait()
 
 	for k, v := range m.Map {
-		fmt.Printf("%f - ", k)
+		fmt.Printf("%d - {", k)
 		for _, value := range v {
-			fmt.Printf("%f ", value)
+			fmt.Printf("%.1f ", value)
 		}
-		println()
+		println("}")
 	}
 }
