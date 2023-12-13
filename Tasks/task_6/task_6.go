@@ -31,6 +31,7 @@ func main() {
 	wg.Wait()
 }
 
+// Остановка горутины с помощью закрытия канала
 func GoroutineStopWithChan(ch chan struct{}, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for {
@@ -44,6 +45,7 @@ func GoroutineStopWithChan(ch chan struct{}, wg *sync.WaitGroup) {
 	}
 }
 
+// Остановка горутины с помощью завершения контекста
 func GoroutineStopWithContext(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for {
@@ -57,6 +59,7 @@ func GoroutineStopWithContext(ctx context.Context, wg *sync.WaitGroup) {
 	}
 }
 
+// Остановка горутины с передачей внешнего флага
 func GoroutineStopWithFlag(flag *atomic.Bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for !flag.Load() {
