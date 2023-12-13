@@ -31,8 +31,11 @@ func WriterIntInt(cm *ConcurrencyMap, dataStream chan KeyValue, id int, wg *sync
 	}
 }
 
+// DataCreator Добавляем 100 случайных значений в канал, после чего закрываем его
 func DataCreator(dataStream chan KeyValue, wg *sync.WaitGroup) {
 	defer wg.Done()
+	defer close(dataStream)
+
 	for i := 0; i < 100; i++ {
 		tmp := KeyValue{Key: rand.Int(), Value: rand.Int()}
 		dataStream <- tmp
@@ -43,7 +46,6 @@ func main() {
 	cm := ConcurrencyMap{Map: make(map[int]int)}
 	wg := sync.WaitGroup{}
 	dataStream := make(chan KeyValue)
-	defer close(dataStream)
 
 	wg.Add(1)
 	go DataCreator(dataStream, &wg)
