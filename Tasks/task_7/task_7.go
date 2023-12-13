@@ -21,11 +21,7 @@ type KeyValue struct {
 // WriterIntInt Добавляем случайное значение пары ключ-значение в map (оба имеют тип int)
 func WriterIntInt(cm *ConcurrencyMap, dataStream chan KeyValue, id int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for {
-		i, ok := <-dataStream
-		if !ok {
-			return
-		}
+	for i := range dataStream {
 		cm.Mutex.Lock()
 		cm.Map[i.Key] = i.Value
 		fmt.Printf("Key-value %d-%d added in %d goroutine\n", i.Key, i.Value, id)
